@@ -18,7 +18,7 @@ public class Menu : MonoBehaviour {
             {
                 window = 2;
             }
-            if (GUI.Button(new Rect(10, 150, 180, 30), "Выход"))
+            if (GUI.Button(new Rect(10, 60, 180, 30), "Выход"))
             {
                 window = 3;
             }
@@ -28,7 +28,7 @@ public class Menu : MonoBehaviour {
         {
             Application.LoadLevel(1);
         }
-        if (window == 5)
+        if (window == 3)
         {
             GUI.Label(new Rect(50, 10, 180, 30), "Вы уже выходите?");
             if (GUI.Button(new Rect(10, 40, 180, 30), "Да"))

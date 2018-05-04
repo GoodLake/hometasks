@@ -6,16 +6,20 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public GameObject MyGameObject;
     private bool isFloor;
-    public Rigidbody2D bullet;
+    public GameObject bullet;
+    Rigidbody2D body;
+    int counter;
 
-
-    private void FixedUpdate()
-    {
-
-    }
     private void Start()
     {
+        body = GetComponent<Rigidbody2D>();
         isFloor = true;
+        counter = 0;
+    }
+
+    void Dead(Collision2D col)
+    {
+        Destroy(this.gameObject);
     }
 
     void Update()
@@ -28,24 +32,41 @@ public class PlayerController : MonoBehaviour
         {
             GetComponent<Rigidbody2D>().AddForce(Vector2.left * speed);
         }
-        if (Input.GetKey(KeyCode.UpArrow) && isFloor)
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isFloor)
         {
-            GetComponent<Rigidbody2D>().AddForce(Vector2.up * 300);
-            isFloor = false;
+            GetComponent<Rigidbody2D>().AddForce(Vector2.up * 200);
+            counter++;
+            if(counter >= 2)
+            {
+                isFloor = false;
+            }
+            Debug.Log(counter);
         }
         if (Input.GetKey(KeyCode.Space))
         {
-            Rigidbody2D BulletPrefab = (Rigidbody2D)Instantiate(bullet, transform.position, transform.rotation);
-            BulletPrefab.velocity = transform.forward * 10;
-            BulletPrefab.GetComponent<Renderer>().material.color = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
-            Destroy(BulletPrefab, 1f);
+            GameObject newBullet = Instantiate(bullet, transform, false);
+            Vector2 force = new Vector2((body.velocity.x > 0) ? 10 : -10, 0);
+            newBullet.GetComponent<Rigidbody2D>().AddForce(force, ForceMode2D.Impulse);
+            newBullet.tag = "Playerbullet";
+            Destroy(newBullet, 1f);
         }
     }
     private void OnCollisionEnter2D(Collision2D col)
     {
+        if (col.collider.tag == "Enemybullet")
+        {
+            Destroy(gameObject);
+            Destroy(col.gameObject);
+        }
         if (col.collider.tag == "Platform")
         {
+            counter = 0;
             isFloor = true;
+        }
+        if(col.collider.tag == "Enemy")
+        {
+            Destroy(gameObject);
+            Application.LoadLevel(0);
         }
     }
 }
