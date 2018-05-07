@@ -19,8 +19,6 @@ public class Spawn : MonoBehaviour
         {
             yield return new WaitForSeconds(Random.Range(0f, 2f));
             int a = Random.Range(0, Points.Length);
-
-            print(a);
             GameObject newEnemy = Instantiate(enemy);
             newEnemy.GetComponent<SpriteRenderer>().color = Color.black;
             newEnemy.transform.position = Points[a].transform.position;

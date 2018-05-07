@@ -1,6 +1,5 @@
 *.sln
 *csproj
 */.vs/
-*/ProjectSettings/
 */Library/
 */UnityPackageManager/
