@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
+    Enemy Mdmg;
+    Enemy Mhl;
     public float speed;
     public GameObject MyGameObject;
     private bool isFloor;
     public GameObject bullet;
     Rigidbody2D body;
     int counter;
-    public static int ammo;
-    public static int playerdmg;
-    public static int playerhp;
+    public int ammo;
+    public int playerdmg;
+    public int playerhp;
 
     private void Start()
     {
+        Mdmg = GameObject.FindObjectOfType<Enemy>();
+        Mhl = GameObject.FindObjectOfType<Enemy>();
         ammo = 200;
         body = GetComponent<Rigidbody2D>();
         isFloor = true;
@@ -25,7 +29,7 @@ public class PlayerController : MonoBehaviour
 
     void Dead(Collision2D col)
     {
-        Destroy(this.gameObject);
+        Destroy(MyGameObject);
     }
 
     void Update()
@@ -47,16 +51,19 @@ public class PlayerController : MonoBehaviour
                 isFloor = false;
             }
         }
-        if (Input.GetKey(KeyCode.Space) && ammo > 0)
+        if (Input.GetKeyDown(KeyCode.Space) && ammo > 0)
         {
             ammo--;
-            Enemy.MobHealth = Enemy.MobHealth - playerdmg;
             Debug.Log(ammo);
             GameObject newBullet = Instantiate(bullet, transform, false);
             Vector2 force = new Vector2((body.velocity.x > 0) ? 10 : -10, 0);
             newBullet.GetComponent<Rigidbody2D>().AddForce(force, ForceMode2D.Impulse);
             newBullet.tag = "PlayerBullet";
             Destroy(newBullet, 1f);
+        }
+        if(playerhp <= 0)
+        {
+            Application.LoadLevel(0);
         }
     }
     private void OnCollisionEnter2D(Collision2D col)
@@ -71,14 +78,10 @@ public class PlayerController : MonoBehaviour
             counter = 0;
             isFloor = true;
         }
-        if(col.collider.tag == "Enemy" && Enemy.MobHealth > playerhp)
+        if(col.collider.tag == "Enemy" && Mhl.MobHealth > playerhp)
         { 
             Destroy(gameObject);
             Application.LoadLevel(0);
-        }
-        if(Enemy.MobHealth < playerhp)
-        {
-            playerhp = playerhp - Enemy.MobDamage;
         }
         if(col.gameObject.tag == "Ammo1")
         {

@@ -9,6 +9,13 @@ TagManager:
   - EnemyBullet
   - PlayerBullet
   - Ammo1
+  - Pl1
+  - Pl2
+  - Pl3
+  - Pl4
+  - Pl5
+  - Pl6
+  - Portal
   layers:
   - Default
   - TransparentFX

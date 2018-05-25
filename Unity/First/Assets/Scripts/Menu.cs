@@ -18,17 +18,22 @@ public class Menu : MonoBehaviour {
             {
                 window = 2;
             }
-            if (GUI.Button(new Rect(10, 60, 180, 30), "Выход"))
+            if (GUI.Button(new Rect(10, 60, 180, 30), "Обучение"))
             {
                 window = 3;
             }
+            if(GUI.Button(new Rect(10, 90, 180, 30), "Выход"))
+            {
+                window = 4;
+            }
+                
         }
 
         if (window == 2)
         {
             Application.LoadLevel(1);
         }
-        if (window == 3)
+        if (window == 4)
         {
             GUI.Label(new Rect(50, 10, 180, 30), "Вы уже выходите?");
             if (GUI.Button(new Rect(10, 40, 180, 30), "Да"))
@@ -39,6 +44,10 @@ public class Menu : MonoBehaviour {
             {
                 window = 1;
             }
+        }
+        if(window == 3)
+        {
+            Application.LoadLevel(2);
         }
         GUI.EndGroup();
     }

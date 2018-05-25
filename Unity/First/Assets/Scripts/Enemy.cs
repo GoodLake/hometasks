@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    PlayerController cntrl;
     public GameObject bullet;
     Transform player;
     Rigidbody2D body;
-    public static int MobHealth;
-    public static int MobDamage;
-    public static int kills;
+    public int MobHealth;
+    public int MobDamage;
+    public int kills;
 
     void FindPlayer()
     {
@@ -19,6 +20,7 @@ public class Enemy : MonoBehaviour
     void Start ()
     {
         StartCoroutine(Logic());
+        cntrl = GameObject.FindObjectOfType<PlayerController>();
         body = GetComponent<Rigidbody2D>();
         FindPlayer();
         MobHealth = 35;
@@ -48,16 +50,20 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if(col.gameObject.tag == "PlayerBullet" && MobHealth <= 0)
+        if(col.gameObject.tag == "PlayerBullet")
         {
-            PlayerController.ammo = PlayerController.ammo + 5;
-            kills++;
-            Destroy(gameObject);
-            Destroy(col.gameObject);
+            MobHealth = MobHealth - cntrl.playerdmg;
+            if(MobHealth <= 0)
+            {
+                cntrl.ammo = cntrl.ammo + 5;
+                Destroy(gameObject);
+                Destroy(col.gameObject);
+                kills++;
+            }
         }
-        if(col.gameObject.tag == "Player" && MobHealth < PlayerController.playerhp)
+        if(col.gameObject.tag == "Player")
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 }
