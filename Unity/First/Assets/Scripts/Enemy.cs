@@ -8,9 +8,11 @@ public class Enemy : MonoBehaviour
     public GameObject bullet;
     Transform player;
     Rigidbody2D body;
-    public int MobHealth;
+    public float MobHealth;
     public int MobDamage;
-    public int kills;
+    bool isLife;
+    float spawntime;
+    int ran;
 
     void FindPlayer()
     {
@@ -19,23 +21,38 @@ public class Enemy : MonoBehaviour
 
     void Start ()
     {
+
         StartCoroutine(Logic());
         cntrl = GameObject.FindObjectOfType<PlayerController>();
         body = GetComponent<Rigidbody2D>();
+        isLife = true;
         FindPlayer();
+        ran = Random.Range(0, 1);
         MobHealth = 35;
         MobDamage = 10;
-        kills = 0;
+        spawntime = 5f;
     }
-	
+	IEnumerator LvlUp()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(spawntime);
+            MobDamage = MobDamage + 1;
+            MobHealth = MobHealth + 10;
+            if (spawntime <= 0.0000001f)
+                spawntime = spawntime / 2;
+            else
+                spawntime = 20f;
+        }
+    }
     IEnumerator Logic()
     {
         while(true)
         {
-            yield return new WaitForSeconds(Random.Range(2f, 3f));
+            yield return new WaitForSeconds(0.5f);
                 Vector2 force = new Vector2(body.velocity.x > 0 ? 15f : -15f, body.velocity.y > 0 ? 15f : -15f);
                 GetComponent<Rigidbody2D>().AddForce(force, ForceMode2D.Impulse);
-                if (transform.position.y < player.transform.position.y) Shoot();
+                if (Mathf.CeilToInt(transform.position.y) == Mathf.CeilToInt(player.transform.position.y)) Shoot();
         }
     }
     void Shoot ()
@@ -53,17 +70,21 @@ public class Enemy : MonoBehaviour
         if(col.gameObject.tag == "PlayerBullet")
         {
             MobHealth = MobHealth - cntrl.playerdmg;
-            if(MobHealth <= 0)
+            if(MobHealth <= 0 && isLife)
             {
+                isLife = false;
+                cntrl.ammo2 = cntrl.ammo2 + 10;
                 cntrl.ammo = cntrl.ammo + 5;
+                if(cntrl.playerhp < cntrl.Maxplayerhp) cntrl.playerhp++;
                 Destroy(gameObject);
                 Destroy(col.gameObject);
-                kills++;
+                FindObjectOfType<info>().AddKill();
+
             }
         }
         if(col.gameObject.tag == "Player")
         {
-            Destroy(gameObject);
+            cntrl.playerhp = cntrl.playerhp - 5;
         }
     }
 }

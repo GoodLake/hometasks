@@ -16,7 +16,7 @@ public class SpawnHeal : MonoBehaviour {
     {
         while (true)
         {
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(3f);
             int a = Random.Range(0, Points.Length);
             GameObject newHeal = Instantiate(heal);
             newHeal.transform.position = Points[a].transform.position;

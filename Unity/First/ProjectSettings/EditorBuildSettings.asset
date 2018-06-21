@@ -14,3 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Learn.unity
     guid: b2bb470f4b52a774a9ea8e292ed1a77c
+  - enabled: 1
+    path: Assets/Scenes/Win.unity
+    guid: bc10c934971e15c4b8096d3a3d4b665e
+  - enabled: 1
+    path: Assets/Scenes/Death.unity
+    guid: 9c15b4671c392714d9f2afa727a1849e

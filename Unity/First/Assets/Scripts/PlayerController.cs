@@ -12,28 +12,68 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D body;
     int counter;
     public int ammo;
+    public int ammo2;
     public int playerdmg;
+    public int Maxplayerhp;
     public int playerhp;
+    bool IsMachineGun;
+    public AudioSource Machinegun;
+    public AudioClip Shoot1;
+    public AudioSource PistolSound;
+    public AudioClip Shoot2;
 
     private void Start()
     {
         Mdmg = GameObject.FindObjectOfType<Enemy>();
         Mhl = GameObject.FindObjectOfType<Enemy>();
-        ammo = 200;
         body = GetComponent<Rigidbody2D>();
         isFloor = true;
         counter = 0;
-        playerdmg = 5;
-        playerhp = 100;
+        IsMachineGun = false;
     }
 
-    void Dead(Collision2D col)
+    void Dead()
     {
+        playerdmg = 3;
+        Maxplayerhp = 100;
         Destroy(MyGameObject);
+    }
+
+    void Pistol ()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && ammo2 > 0)
+        {
+
+            ammo2--;
+            GameObject newBullet = Instantiate(bullet, transform, false);
+            PistolSound.PlayOneShot(Shoot2);
+            Vector2 force = new Vector2((body.velocity.x > 0) ? 10 : -10, 0);
+            newBullet.GetComponent<Rigidbody2D>().AddForce(force, ForceMode2D.Impulse);
+            newBullet.tag = "PlayerBullet";
+            Destroy(newBullet, 2f);
+        }
+    }
+
+    void Minigun ()
+    {
+            if (Input.GetKey(KeyCode.Space) && ammo > 0)
+            {
+                ammo--;
+                GameObject newBullet = Instantiate(bullet, transform, false);
+                Machinegun.PlayOneShot(Shoot1);
+                Vector2 force = new Vector2((body.velocity.x > 0) ? 20 : -20, 0);
+                newBullet.GetComponent<Rigidbody2D>().AddForce(force, ForceMode2D.Impulse);
+                newBullet.tag = "PlayerBullet";
+                Destroy(newBullet, 2f);
+            }
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            IsMachineGun = true;
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            IsMachineGun = false;
         if (Input.GetKey(KeyCode.RightArrow))
         {
             GetComponent<Rigidbody2D>().AddForce(Vector2.right * speed);
@@ -51,37 +91,36 @@ public class PlayerController : MonoBehaviour
                 isFloor = false;
             }
         }
-        if (Input.GetKeyDown(KeyCode.Space) && ammo > 0)
-        {
-            ammo--;
-            Debug.Log(ammo);
-            GameObject newBullet = Instantiate(bullet, transform, false);
-            Vector2 force = new Vector2((body.velocity.x > 0) ? 10 : -10, 0);
-            newBullet.GetComponent<Rigidbody2D>().AddForce(force, ForceMode2D.Impulse);
-            newBullet.tag = "PlayerBullet";
-            Destroy(newBullet, 1f);
-        }
         if(playerhp <= 0)
         {
-            Application.LoadLevel(0);
+            Application.LoadLevel(4);
+        }
+        if(IsMachineGun)
+        {
+            Minigun();
+        }
+        else
+        {
+            Pistol();
         }
     }
+
+   void OnTriggerEnter2D(Collider2D coll)
+    {
+        if (coll.gameObject.tag == "EnemyBullet")
+        {
+            playerhp = playerhp - Mdmg.MobDamage;
+            if (playerhp <= 0) Dead();
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.collider.tag == "EnemyBullet")
-        {
-            playerhp = playerhp - 10;
-            if (playerhp <= 0) Dead(col);
-        }
-        if (col.collider.tag == "Platform")
+       
+        if (col.gameObject.tag == "Platform")
         {
             counter = 0;
             isFloor = true;
-        }
-        if(col.collider.tag == "Enemy" && Mhl.MobHealth > playerhp)
-        { 
-            Destroy(gameObject);
-            Application.LoadLevel(0);
         }
         if(col.gameObject.tag == "Ammo1")
         {
